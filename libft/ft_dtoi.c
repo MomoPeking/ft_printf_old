@@ -1,19 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*   ft_dtoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qdang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/18 22:44:11 by qdang             #+#    #+#             */
-/*   Updated: 2019/10/19 00:04:25 by qdang            ###   ########.fr       */
+/*   Created: 2019/12/29 20:34:11 by qdang             #+#    #+#             */
+/*   Updated: 2019/12/31 16:02:24 by qdang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_bzero(void *s, size_t n)
+int		ft_dtoi(double nb)
 {
-	if (n != 0)
-		ft_memset(s, 0, n);
+	if (nb > 0)
+		if (nb - (int)nb >= 0.5)
+			return ((int)nb + 1);
+	if (nb < 0)
+		if ((int)nb - nb >= 0.5)
+			return ((int)nb - 1);
+	return ((int)nb);
 }

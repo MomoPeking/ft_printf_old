@@ -6,22 +6,22 @@
 /*   By: qdang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:36:59 by qdang             #+#    #+#             */
-/*   Updated: 2019/11/22 10:41:08 by qdang            ###   ########.fr       */
+/*   Updated: 2019/11/21 20:39:29 by qdang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_strnbr(char *sp, char sc)
+int		ft_strnbr(char *sp)
 {
 	int		nb;
 	int		flag;
 
 	nb = 0;
 	flag = 0;
-	while (*sp && *sp != sc)
+	while (*sp)
 	{
-		while (*sp >= '0' && *sp <= '9' && *sp != sc)
+		while (*sp >= '0' && *sp <= '9')
 		{
 			flag = 1;
 			nb = nb * 10 + *sp - '0';
