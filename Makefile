@@ -20,7 +20,7 @@ LIB_LINK = -I $(LIB_PATH) -L $(LIB_PATH) -lft
 $(NAME):
 	@make -C $(LIB_PATH)
 	@gcc -c *.c
-	@gcc $(LIB_LINK) -lm *.o -o $(NAME)
+	@gcc $(FALGS) $(LIB_LINK) -lm *.o -o a.out
 
 all: $(NAME)
 
@@ -29,5 +29,5 @@ clean:
 	@rm *.o
 
 fclean:
-	@rm $(NAME)
+	@rm a.out
 	@rm $(LIB_PATH)/*.a

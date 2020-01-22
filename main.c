@@ -13,165 +13,60 @@
 #include "ft_printf.h"
 #include <stdio.h>
 
-void    ft_putui(unsigned int i)
-{
-    if (i > 9)
-    {
-        ft_putui(i / 10);
-        ft_putchar(i % 10 + '0');
-    }
-    else
-        ft_putchar(i + '0');
-}
-
-void    ft_putoct(unsigned int i)
-{
-    if (i > 7)
-    {
-        ft_putoct(i / 8);
-        ft_putchar(i % 8 + '0');
-    }
-    else
-        ft_putchar(i + '0');
-}
-
-void    ft_puthex(unsigned int i, char c)
-{
-    if (i > 15)
-    {
-        ft_puthex(i / 16, c);
-        ft_puthex(i % 16, c);
-    }  
-    else
-    {
-        if (i <= 9)
-            ft_putchar(i + '0');
-        else
-        {
-            if (c == 'x')
-                ft_putchar(i - 10 + 'a');
-            else
-                ft_putchar(i - 10 + 'A');  
-        }
-    }
-}
-
 int		ft_printf(const char *restrict format, ...)
 {
-	va_list         ap;
-    int             len;
-    char            *t_string;
-    int             t_int;
-    unsigned int    t_unsigned_int;
+    t_info      *s;
 
-    len = 0;
-    va_start(ap, format);
-    while (*format)
+    s = (t_info *)malloc(sizeof(t_info));
+    s->len = 0; 
+    va_start(s->ap, format);
+    s->fm = format;
+    while (*s->fm)
     {
-        while (*format && *format != '%')
+        s->signal = 0;
+        while (*s->fm && *s->fm != '%')
 	    {
-		    ft_putchar(*format);
-            len++;
-            format++;
+		    ft_putchar(*s->fm);
+            s->len++;
+            s->fm++; 
 	    }
-        if (*format && *format == '%')
+        if (*s->fm && *s->fm == '%')
         {
-            format++;
-            if (*format == '%')
-            {
-                ft_putchar('%');
-                len++;
-                format++;
-            }
-            if (*format == 'c')
-            {
-                ft_putchar(va_arg(ap, int));
-                len++;
-                format++;
-            }
-            if (*format == 's')
-            {
-                t_string = va_arg(ap, char *);
-                ft_putstr(t_string);               
-                len += ft_strlen(t_string);
-                format++;
-            }
-            if (*format == 'd' || *format == 'i')
-            {
-                t_int = va_arg(ap, int);
-                ft_putnbr(t_int);             
-                if (t_int == 0)
-                    len++;
-                while (t_int > 0)
-                {
-                    len++;
-                    t_int /= 10;
-                }
-                format++;
-            }
-            if (*format == 'o')
-            {
-                t_unsigned_int = va_arg(ap, unsigned int);
-                ft_putoct(t_unsigned_int);
-                if (t_unsigned_int == 0)
-                    len++;
-                while (t_unsigned_int > 0)
-                {
-                    len++;
-                    t_unsigned_int /= 8;
-                }
-                format++;
-            }
-            if (*format == 'u')
-            {
-                t_unsigned_int = va_arg(ap, unsigned int);
-                ft_putui(t_unsigned_int);
-                if (t_unsigned_int == 0)
-                    len++;
-                while (t_unsigned_int > 0)
-                {
-                    len++;
-                    t_unsigned_int /= 10;
-                }
-                format++;
-            }
-            if (*format == 'x' || *format == 'X')
-            {
-                t_unsigned_int = va_arg(ap, unsigned int);
-                ft_puthex(t_unsigned_int, *format);
-                if (t_unsigned_int == 0)
-                    len++;
-                while (t_unsigned_int > 0)
-                {
-                    len++;
-                    t_unsigned_int /= 16;
-                }
-                format++;
-            }
-
-/*          deal with 'p' after numbers
-            if (*format == 'p')
-            {
-                temp = va_arg(ap, void *);
-                ft_putchar(temp);
-                format++;
-                len += ft_strlen(temp);
-            }
-*/
+            s->fm++;
+            s = deal_flags(s);
+            s = deal_min_field_width(s);
+            if (*s->fm == '%' && s->signal == 0)
+                s = deal_percentage(s);               
+            if (*s->fm == 'c' && s->signal == 0)
+                s = deal_char(s);
+            if (*s->fm == 's' && s->signal == 0)
+                s = deal_string(s);
+            if (*s->fm == 'p' && s->signal == 0)
+                s = deal_pointer(s);
+            if ((*s->fm == 'i' || *s->fm == 'd') && s->signal == 0)
+                s = deal_decimal_integer(s);
+            if (*s->fm == 'o' && s->signal == 0)
+                s = deal_octal(s);
+            if (*s->fm == 'u' && s->signal == 0)
+                s = deal_unsigned_int(s);
+            if ((*s->fm == 'x' || *s->fm == 'X') && s->signal == 0)
+                s = deal_hexadecimal(s);
         }
     }
-    va_end(ap);
-    return (len);
+    va_end(s->ap);
+    return (s->len);
 }
 
 int		main()
 {
     int     a;
     int     b;
+    char    *temp = "abs";
+    int     c = 1;
 
-    a = ft_printf("%o, %X\n", 0, 0);
+    a = ft_printf("%0 20do, %#-20x\n", 12346, 31241);
     printf("Return Value of ft_printf: %d\n", a);
-    b = printf("%o, %X\n", 0, 0);
+    b = printf("%0 20do, %#-20x\n", 12346, 31241);
     printf("Return Value of printf: %d\n", b);
     return (0);
 }
