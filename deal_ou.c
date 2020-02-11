@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+#include <stdio.h>
 
-static int      len_octal(t_info *s, unsigned int nbr)
+static int      len_octal(t_info *s, unsigned long long nbr)
 {
     int     nbrlen;
 
@@ -29,8 +30,9 @@ static int      len_octal(t_info *s, unsigned int nbr)
     return (nbrlen);
 }
 
-static void      output_octal(t_info *s, unsigned int nbr)
+static void      output_octal(t_info *s, unsigned long long nbr, int z)
 {
+    ft_putnchar('0', z);
     if (s->flag[HASH] == '1')
         ft_putchar('0');
     ft_putoct(nbr);
@@ -38,33 +40,43 @@ static void      output_octal(t_info *s, unsigned int nbr)
 
 t_info          *deal_octal(t_info *s)
 {
-    unsigned int    nbr;
-    int             nbrlen;
+    unsigned long long  nbr;
+    int                 nbrlen;
+    int                 z;
 
-    nbr = va_arg(s->ap, unsigned int);
+    nbr = trans_ull(s, va_arg(s->ap, unsigned long long));
     nbrlen = len_octal(s, nbr);
+
+    z = s->prec - nbrlen;
+    if (z < 0)
+        z = 0;    
     if (s->flag[MINUS] == '1')
-        output_octal(s, nbr);
+        output_octal(s, nbr, z);
+
+    if (s->mfw <= s->prec)
+        s->len += z;
+    else
+        s->len += s->mfw - nbrlen;
+
     if (s->mfw > nbrlen)
     {
-        s->len += s->mfw - nbrlen;
         s->mfw++;
-        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1')
-            while (--s->mfw > nbrlen)
+        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1' && z == 0)
+            while (--s->mfw > nbrlen + z)
                 ft_putchar('0');
         else
-            while (--s->mfw > nbrlen)
+            while (--s->mfw > nbrlen + z)
                 ft_putchar(' ');                
     }
     if (s->flag[MINUS] != '1')
-        output_octal(s, nbr);
+        output_octal(s, nbr, z);
     s->len += nbrlen;
     s->fm++;
     s->signal = 1;
     return (s);
 }
 
-static int  len_unsigned_int(t_info *s, unsigned int nbr)
+static int  len_unsigned_int(t_info *s, unsigned long long nbr)
 {
     int     nbrlen;
 
@@ -81,26 +93,42 @@ static int  len_unsigned_int(t_info *s, unsigned int nbr)
 
 t_info      *deal_unsigned_int(t_info *s)
 {
-    unsigned int    nbr;   
-    int             nbrlen;
+    unsigned long long  nbr;   
+    int                 nbrlen;
+    int                 z;
 
-    nbr = va_arg(s->ap, unsigned int);
+    nbr = trans_ull(s, va_arg(s->ap, unsigned long long));
     nbrlen = len_unsigned_int(s, nbr);
+
+    z = s->prec - nbrlen;
+    if (z < 0)
+        z = 0;
+
     if (s->flag[MINUS] == '1')
-        ft_putui(nbr);        
+    {
+        ft_putnchar('0', z);
+        ft_putui(nbr); 
+    }
+    if (s->mfw <= s->prec)
+        s->len += z;
+    else
+        s->len += s->mfw - nbrlen;   
+
     if (s->mfw > nbrlen)
     {
-        s->len += s->mfw - nbrlen;
         s->mfw++;
-        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1')
-            while (--s->mfw > nbrlen)
+        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1' && z == 0)
+            while (--s->mfw > nbrlen + z)
                 ft_putchar('0');
         else
-            while (--s->mfw > nbrlen)
-                ft_putchar(' ');        
+            while (--s->mfw > nbrlen + z)
+                ft_putchar(' ');     
     }
     if (s->flag[MINUS] != '1')
-        ft_putui(nbr);
+    {
+        ft_putnchar('0', z);
+        ft_putui(nbr); 
+    }
     s->len += nbrlen;
     s->fm++;
     s->signal = 1;

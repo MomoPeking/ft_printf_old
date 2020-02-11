@@ -35,6 +35,8 @@ int		ft_printf(const char *restrict format, ...)
             s->fm++;
             s = deal_flags(s);
             s = deal_min_field_width(s);
+            s = deal_precision(s);
+            s = deal_length(s);
             if (*s->fm == '%' && s->signal == 0)
                 s = deal_percentage(s);               
             if (*s->fm == 'c' && s->signal == 0)
@@ -51,6 +53,8 @@ int		ft_printf(const char *restrict format, ...)
                 s = deal_unsigned_int(s);
             if ((*s->fm == 'x' || *s->fm == 'X') && s->signal == 0)
                 s = deal_hexadecimal(s);
+            if (*s->fm == 'f' && s->signal == 0)
+                s = deal_float(s);
         }
     }
     va_end(s->ap);
@@ -59,14 +63,17 @@ int		ft_printf(const char *restrict format, ...)
 
 int		main()
 {
-    int     a;
-    int     b;
-    char    *temp = "abs";
-    int     c = 1;
+    int         a;
+    int         b;
+    char        *temp = "abcdefg";
+    long long   c = 4775800;
+    float       d = 3.1415926;
+    char        e = 'A';
 
-    a = ft_printf("%0 20do, %#-20x\n", 12346, 31241);
+
+    a = ft_printf("%#-20.15hhx\n", c);
     printf("Return Value of ft_printf: %d\n", a);
-    b = printf("%0 20do, %#-20x\n", 12346, 31241);
+    b = printf("%#20.10f\n", d);
     printf("Return Value of printf: %d\n", b);
     return (0);
 }

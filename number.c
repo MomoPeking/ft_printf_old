@@ -12,7 +12,22 @@
 
 #include "ft_printf.h"
 
-void    ft_putui(unsigned int i)
+void	ft_putll(long long i)
+{
+	if (i == -9223372036854775807)
+		ft_putstr("9223372036854775807");
+	else if (i < 0)
+		ft_putll(i * -1);
+	else if (i >= 0 && i <= 9)
+		ft_putchar('0' + i);
+	else
+	{
+        ft_putll(i / 10);
+        ft_putll(i % 10);
+	}
+}
+
+void    ft_putui(unsigned long long i)
 {
     if (i > 9)
     {
@@ -23,7 +38,7 @@ void    ft_putui(unsigned int i)
         ft_putchar(i + '0');
 }
 
-void    ft_putoct(unsigned int i)
+void    ft_putoct(unsigned long long i)
 {
     if (i > 7)
     {

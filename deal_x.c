@@ -29,7 +29,7 @@ static int      len_hexadecimal(t_info *s, unsigned int nbr)
     return (nbrlen);
 }
 
-static void     minus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen)
+static void     minus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen, int z)
 {
     if (s->flag[HASH] == '1')
     {
@@ -38,16 +38,17 @@ static void     minus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen)
         else
             ft_putstr("0X");
     }
+    ft_putnchar('0', z); 
     ft_puthex(nbr, *s->fm);
     if (s->mfw > nbrlen)
-        while (--s->mfw > nbrlen)
+        while (--s->mfw > nbrlen + z)
             ft_putchar(' ');
 }
 
-static void     nonminus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen)
+static void     nonminus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen, int z)
 {
     if (s->mfw > nbrlen && s->flag[ZERO] != '1')
-        while (--s->mfw > nbrlen)
+        while (--s->mfw > nbrlen + z)
             ft_putchar(' ');
     if (s->flag[HASH] == '1')
     {
@@ -57,27 +58,38 @@ static void     nonminus_hexadecimal(t_info *s, unsigned int nbr, int nbrlen)
             ft_putstr("0X");
     }
     if (s->mfw > nbrlen && s->flag[ZERO] == '1')
-        while (--s->mfw > nbrlen)
+        while (--s->mfw > nbrlen + z)
             ft_putchar('0');
+    ft_putnchar('0', z); 
     ft_puthex(nbr, *s->fm);
 }
 
 t_info          *deal_hexadecimal(t_info *s)
 {
-    unsigned int    nbr;
-    int             nbrlen;
+    unsigned long long  nbr;
+    int                 nbrlen;
+    int                 z;
 
-    nbr = va_arg(s->ap, unsigned int);
+    nbr = trans_ull(s, va_arg(s->ap, unsigned long long));
     nbrlen = len_hexadecimal(s, nbr);
-    if (s->mfw > nbrlen)
-    {
-        s->len += s->mfw - nbrlen;
-        s->mfw++;
-    }
-    if (s->flag[MINUS] == '1')
-        minus_hexadecimal(s, nbr, nbrlen);
+
+    z = s->prec - nbrlen;
+    if (z < 0)
+        z = 0;
+    if (s->flag[HASH] == '1')
+        z += 2;
+
+    if (s->mfw <= s->prec)
+        s->len += z;
     else
-        nonminus_hexadecimal(s, nbr, nbrlen);
+        s->len += s->mfw - nbrlen; 
+    if (s->mfw > nbrlen)
+        s->mfw++;
+
+    if (s->flag[MINUS] == '1')
+        minus_hexadecimal(s, nbr, nbrlen, z);
+    else
+        nonminus_hexadecimal(s, nbr, nbrlen, z);
     s->len += nbrlen;
     s->fm++;
     s->signal = 1;

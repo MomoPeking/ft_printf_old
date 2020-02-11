@@ -47,3 +47,40 @@ t_info  *deal_min_field_width(t_info *s)
     }
     return (s);
 }
+
+t_info  *deal_precision(t_info *s)
+{
+    s->prec = 0;
+    if (*s->fm == '.')
+    {
+        s->fm++;
+        if (*s->fm >= '0' && *s->fm <= '9')
+            s->prec = ft_strnbr((char *)s->fm);
+        while (*s->fm >= '0' && *s->fm <= '9')
+            s->fm++;
+        if (*s->fm == '*')
+        {
+            s->prec = va_arg(s->ap, int);
+            s->fm++;
+        }
+    }
+    return (s);    
+}
+
+t_info  *deal_length(t_info *s)
+{
+    ft_bzero(s->length, 5);
+    if (*s->fm == 'h' && *(s->fm + 1) == 'h')
+        s->length[CHAR] = '1';
+    if (*s->fm == 'h' && *(s->fm + 1) != 'h')
+        s->length[SHORT] = '1';
+    if (*s->fm == 'l' && *(s->fm + 1) != 'l')
+        s->length[LONG] = '1';
+    if (*s->fm == 'l' && *(s->fm + 1) == 'l')
+        s->length[LONGLONG] = '1';
+    if (*s->fm == 'L')
+        s->length[LONGDOUBLE] = '1';
+    while (*s->fm == 'h' || *s->fm == 'l' || *s->fm == 'L')
+        s->fm++;
+    return (s);    
+}

@@ -95,5 +95,7 @@ int				ft_strnbr(char *sp);
 int				ft_abs(int i);
 int				ft_atoi_hex(const char *str);
 int				ft_dtoi(double nb);
+void			ft_putnchar(char c, int n);
+int     		ft_nbrlen(long long nbr);
 
 #endif

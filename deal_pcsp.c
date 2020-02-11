@@ -66,10 +66,16 @@ t_info          *deal_string(t_info *s)
     char    *str;
     int     strlen;
 
-    str = va_arg(s->ap, char *);
+    if (s->prec != 0)
+    {
+        str = (char *)malloc(sizeof(char) * s->prec);
+        ft_strncpy(str, va_arg(s->ap, char *), s->prec);
+    }
+    else
+        str = va_arg(s->ap, char *);   
     strlen = ft_strlen(str);
     if (s->flag[MINUS] == '1')
-        ft_putstr(str);     
+        ft_putstr(str);
     if (s->mfw > strlen)
     {
         s->len += s->mfw - strlen;
@@ -85,28 +91,35 @@ t_info          *deal_string(t_info *s)
         ft_putstr(str);
     s->len += strlen;
     s->fm++;
+    free(str);
     return (s);
 }
 
-static void     output_pointer(t_info *s, unsigned long long ptr, int ptrlen)
+static void     output_pointer(t_info *s, unsigned long long ptr, int ptrlen, int z)
 {
-    if (s->flag[MINUS] == '1' || s->flag[ZERO] == '1')
+    if (s->flag[MINUS] == '1' || (s->flag[ZERO] == '1' && z <= 0))
+    {
         ft_putstr("0x");
+        ft_putnchar('0', z);
+    }
     if (s->flag[MINUS] == '1')
         ft_puthex(ptr, 'x');
-    if (s->mfw > ptrlen)
+    if (s->mfw > ptrlen && s->mfw > s->prec)
     {
         s->len += s->mfw - ptrlen;
         s->mfw++;
-        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1')
+        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1' && z <= 0)
             while (--s->mfw > ptrlen)
                 ft_putchar('0');
         else
-            while (--s->mfw > ptrlen)
+            while (--s->mfw > ptrlen + z)
                 ft_putchar(' ');
     }
-    if (s->flag[MINUS] != '1' && s->flag[ZERO] != '1')
+    if (s->flag[MINUS] != '1' && (s->flag[ZERO] != '1' || z > 0))
+    {
         ft_putstr("0x");
+        ft_putnchar('0', z);
+    }
     if (s->flag[MINUS] != '1')
         ft_puthex(ptr, 'x');
 }
@@ -116,6 +129,7 @@ t_info          *deal_pointer(t_info *s)
     unsigned long long      ptr;
     unsigned long long      temp;
     int                     ptrlen;
+    int                     z;
 
     ptr = (unsigned long long)va_arg(s->ap, void *);
     temp = ptr;
@@ -125,7 +139,10 @@ t_info          *deal_pointer(t_info *s)
         ptrlen++;
         temp /= 16;
     }
-    output_pointer(s, ptr, ptrlen);
+    z = s->prec - ptrlen + 2;
+    if (s->mfw <= s->prec && z > 0)
+        s->len += z;
+    output_pointer(s, ptr, ptrlen, z);
     s->len += ptrlen;
     s->fm++;
     s->signal = 1;
