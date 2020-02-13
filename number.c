@@ -14,8 +14,8 @@
 
 void	ft_putll(long long i)
 {
-	if (i == -9223372036854775807)
-		ft_putstr("9223372036854775807");
+	if (i == -9223372036854775808U)
+		ft_putstr("9223372036854775808");
 	else if (i < 0)
 		ft_putll(i * -1);
 	else if (i >= 0 && i <= 9)

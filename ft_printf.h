@@ -39,12 +39,8 @@ typedef	struct	s_info
 	char		flag[5];
 	char		length[5];
 	int			signal;
+	int			point;
 }				t_info;
-
-void    			ft_putll(long long i);
-void    			ft_putui(unsigned long long i);
-void    			ft_putoct(unsigned long long i);
-void    			ft_puthex(unsigned long long i, char c);
 
 t_info  			*deal_flags(t_info *s);
 t_info  			*deal_min_field_width(t_info *s);
@@ -61,9 +57,18 @@ t_info      		*deal_octal(t_info *s);
 t_info          	*deal_unsigned_int(t_info *s);
 t_info          	*deal_hexadecimal(t_info *s);
 t_info          	*deal_float(t_info *s);
+t_info          	*deal_longdouble(t_info *s);
+
+void    			ft_putll(long long i);
+void    			ft_putui(unsigned long long i);
+void    			ft_putoct(unsigned long long i);
+void    			ft_puthex(unsigned long long i, char c);
+
+int      			len_float(t_info *s, long double nbr);
+void            	minus_float(t_info *s, long double nbr, int nbrlen);
+void            	nonminus_float(t_info *s, long double nbr, int nbrlen);
 
 unsigned long long	trans_ull(t_info *s, unsigned long long nbr);
 long long           trans_ll(t_info *s, long long nbr);
-
 
 #endif

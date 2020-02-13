@@ -53,8 +53,10 @@ int		ft_printf(const char *restrict format, ...)
                 s = deal_unsigned_int(s);
             if ((*s->fm == 'x' || *s->fm == 'X') && s->signal == 0)
                 s = deal_hexadecimal(s);
-            if (*s->fm == 'f' && s->signal == 0)
+            if (*s->fm == 'f' && s->length[LONGDOUBLE] != '1' && s->signal == 0)
                 s = deal_float(s);
+            if (*s->fm == 'f' && s->length[LONGDOUBLE] == '1' && s->signal == 0)
+                s = deal_longdouble(s);
         }
     }
     va_end(s->ap);
@@ -66,14 +68,19 @@ int		main()
     int         a;
     int         b;
     char        *temp = "abcdefg";
-    long long   c = 4775800;
-    float       d = 3.1415926;
-    char        e = 'A';
+    long long   c = 12345;
+    long double d = 37.9415;
+    double      e = 884.32;
+    float       f = 79.234;    
+    char        g = 'A';
 
-
-    a = ft_printf("%#-20.15hhx\n", c);
+    a = ft_printf("%#+015.10f\n", e);
     printf("Return Value of ft_printf: %d\n", a);
-    b = printf("%#20.10f\n", d);
+    b = printf("%#+015.10f\n", e);
     printf("Return Value of printf: %d\n", b);
+
+//    printf("size of float:%lu\n", sizeof(float));
+//    printf("size of double:%lu\n", sizeof(double));
+//    printf("size of long double:%lu\n", sizeof(long double));        
     return (0);
 }

@@ -50,12 +50,20 @@ t_info  *deal_min_field_width(t_info *s)
 
 t_info  *deal_precision(t_info *s)
 {
+    int     i;
+
     s->prec = 0;
+    s->point = 0;
     if (*s->fm == '.')
     {
+        s->point = 1;
         s->fm++;
         if (*s->fm >= '0' && *s->fm <= '9')
+        {
             s->prec = ft_strnbr((char *)s->fm);
+            if (s->prec != 0)
+                s->point = 0;
+        }
         while (*s->fm >= '0' && *s->fm <= '9')
             s->fm++;
         if (*s->fm == '*')

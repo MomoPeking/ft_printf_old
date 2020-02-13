@@ -53,10 +53,7 @@ t_info          *deal_octal(t_info *s)
     if (s->flag[MINUS] == '1')
         output_octal(s, nbr, z);
 
-    if (s->mfw <= s->prec)
-        s->len += z;
-    else
-        s->len += s->mfw - nbrlen;
+    s->mfw <= s->prec ? (s->len += z) : (s->len += s->mfw - nbrlen);
 
     if (s->mfw > nbrlen)
     {
@@ -109,10 +106,8 @@ t_info      *deal_unsigned_int(t_info *s)
         ft_putnchar('0', z);
         ft_putui(nbr); 
     }
-    if (s->mfw <= s->prec)
-        s->len += z;
-    else
-        s->len += s->mfw - nbrlen;   
+
+    s->mfw <= s->prec ? (s->len += z) : (s->len += s->mfw - nbrlen);
 
     if (s->mfw > nbrlen)
     {

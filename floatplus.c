@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   deal_di.c                                          :+:      :+:    :+:   */
+/*   floatplus.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qdang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/22 11:51:17 by qdang             #+#    #+#             */
-/*   Updated: 2020/01/22 11:51:23 by qdang            ###   ########.fr       */
+/*   Created: 2020/02/12 16:15:56 by qdang             #+#    #+#             */
+/*   Updated: 2020/02/12 16:16:06 by qdang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include <stdio.h>
 
-static int      len_decimal_integer(t_info *s, long long nbr)
+int             len_float(t_info *s, long double nbr)
 {
     int     nbrlen;
 
     nbrlen = ft_nbrlen(nbr);
+    if (s->point == 1)
+        if (s->flag[HASH] == '1')
+            nbrlen++;
+    if (s->point != 1)    
+    {
+        if (s->prec == 0)
+            nbrlen += 7;
+        else
+            nbrlen += s->prec + 1;        
+    }
     if (s->flag[PLUS] == '1' && nbr >= 0)
         nbrlen++;
     if (s->flag[SPACE] == '1' && s->flag[PLUS] != '1' && nbr >= 0)
@@ -27,24 +36,49 @@ static int      len_decimal_integer(t_info *s, long long nbr)
     return (nbrlen);
 }
 
-static void     minus_decimal_integer(t_info *s, long long nbr, int nbrlen, int z)
+static void     ft_putf(t_info *s, long double nbr, int nbrlen)
+{
+    double  decnbr;
+    int     declen;
+
+    declen = 0;
+    if (s->flag[PLUS] == '1' || nbr < 0)   
+        declen = -1;
+	if (nbr < 0)
+		nbr *= -1;
+    decnbr = nbr - (int)nbr;
+    declen += nbrlen - ft_nbrlen(nbr);
+    if (s->flag[HASH] == '1' || s->point != 1)
+        declen--;
+    ft_putnbr(nbr);
+    if (s->flag[HASH] == '1' || s->point != 1)
+        ft_putchar('.');    
+    while (declen > 0)
+    {
+        decnbr *= 10;
+        ft_putnbr(decnbr);
+        decnbr = decnbr - (int)decnbr;
+        declen--;
+    }    
+}
+
+void            minus_float(t_info *s, long double nbr, int nbrlen)
 {
     if (s->flag[PLUS] == '1' && nbr >= 0)
         ft_putchar('+');
     if (s->flag[SPACE] == '1' && s->flag[PLUS] != '1' && nbr >= 0)
         ft_putchar(' ');
     if (nbr < 0)
-        ft_putchar('-');
-    ft_putnchar('0', z);   
-    ft_putll(nbr);
+        ft_putchar('-');  
+    ft_putf(s, nbr, nbrlen);
     if (s->mfw > nbrlen)
         while (--s->mfw > nbrlen)
             ft_putchar(' ');
 }
 
-static void     width_decimal_integer(t_info *s, long long nbr, int nbrlen, int z)
+static void     width_float(t_info *s, long double nbr, int nbrlen)
 {
-    if (s->flag[ZERO] == '1' && z == 0)
+    if (s->flag[ZERO] == '1')
     {
         if (s->flag[PLUS] == '1' && nbr >= 0)
             ft_putchar('+');
@@ -52,12 +86,12 @@ static void     width_decimal_integer(t_info *s, long long nbr, int nbrlen, int 
             ft_putchar(' ');
         if (nbr < 0)
             ft_putchar('-');
-        while (--s->mfw > nbrlen + z)
+        while (--s->mfw > nbrlen)
             ft_putchar('0');
     }
     else
     {
-        while (--s->mfw > nbrlen + z)
+        while (--s->mfw > nbrlen)
             ft_putchar(' ');
         if (s->flag[PLUS] == '1' && nbr >= 0)
             ft_putchar('+');
@@ -66,14 +100,13 @@ static void     width_decimal_integer(t_info *s, long long nbr, int nbrlen, int 
         if (nbr < 0)
             ft_putchar('-'); 
     }
-    ft_putnchar('0', z);
-    ft_putll(nbr);
+    ft_putf(s, nbr, nbrlen);
 }
 
-static void     nonminus_decimal_integer(t_info *s, long long nbr, int nbrlen, int z)
+void            nonminus_float(t_info *s, long double nbr, int nbrlen)
 {
     if (s->mfw > nbrlen)
-        width_decimal_integer(s, nbr, nbrlen, z);
+        width_float(s, nbr, nbrlen);
     else
     {
         if (s->flag[PLUS] == '1' && nbr >= 0)
@@ -82,36 +115,6 @@ static void     nonminus_decimal_integer(t_info *s, long long nbr, int nbrlen, i
             ft_putchar(' ');
         if (nbr < 0)
             ft_putchar('-');
-        ft_putnchar('0', z);
-        ft_putll(nbr);
+        ft_putf(s, nbr, nbrlen);
     }
-}
-
-t_info          *deal_decimal_integer(t_info *s)
-{
-    long long   nbr;
-    int         nbrlen;
-    int         z;
-
-    nbr = trans_ll(s, va_arg(s->ap, long long));
-    nbrlen = len_decimal_integer(s, nbr);
-
-    z = s->prec - ft_nbrlen(nbr);
-    if (z < 0)
-        z = 0;
-
-    if (s->mfw <= s->prec)
-        s->len += z;
-    if (s->mfw > nbrlen && s->mfw > s->prec)
-    {
-        s->len += s->mfw - nbrlen;
-        s->mfw++;
-    }
- 
-    s->flag[MINUS] == '1' ? minus_decimal_integer(s, nbr, nbrlen, z) :
-        nonminus_decimal_integer(s, nbr, nbrlen, z);
-    s->len += nbrlen;
-    s->fm++;
-    s->signal = 1;
-    return (s);
 }
