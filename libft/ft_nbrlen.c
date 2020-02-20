@@ -17,7 +17,7 @@ int     ft_nbrlen(long long nbr)
     int nbrlen;
 
     nbrlen = 0;
-    if (nbr == -9223372036854775807)
+    if ((unsigned long long)nbr == -9223372036854775808U)
         return (19);
     if (nbr == 0)
         return (1);

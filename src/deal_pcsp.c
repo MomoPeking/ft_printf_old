@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../includes/ft_printf.h"
 
 t_info          *deal_percentage(t_info *s)
 {
@@ -72,26 +72,35 @@ t_info          *deal_string(t_info *s)
         ft_strncpy(str, va_arg(s->ap, char *), s->prec);
     }
     else
-        str = va_arg(s->ap, char *);   
-    strlen = ft_strlen(str);
-    if (s->flag[MINUS] == '1')
-        ft_putstr(str);
-    if (s->mfw > strlen)
+        str = va_arg(s->ap, char *);
+    if (str == NULL)
     {
-        s->len += s->mfw - strlen;
-        s->mfw++;
-        if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1')
-            while (--s->mfw > strlen)
-                ft_putchar('0');
-        else
-            while (--s->mfw > strlen)
-                ft_putchar(' ');
+        ft_putstr("(null)");
+        s->len += 6;
     }
-    if (s->flag[MINUS] != '1')
-        ft_putstr(str);
-    s->len += strlen;
+    else
+    {
+        strlen = ft_strlen(str);
+        if (s->flag[MINUS] == '1')
+            ft_putstr(str);
+        if (s->mfw > strlen)
+        {
+            s->len += s->mfw - strlen;
+            s->mfw++;
+            if (s->flag[ZERO] == '1' && s->flag[MINUS] != '1')
+                while (--s->mfw > strlen)
+                    ft_putchar('0');
+            else
+                while (--s->mfw > strlen)
+                    ft_putchar(' ');
+        }
+        if (s->flag[MINUS] != '1')
+            ft_putstr(str);
+        s->len += strlen;
+    } 
+    if (s->prec != 0)
+        free(str);
     s->fm++;
-    free(str);
     return (s);
 }
 

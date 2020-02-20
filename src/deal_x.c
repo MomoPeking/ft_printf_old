@@ -10,23 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
-#include <stdio.h>
+#include "../includes/ft_printf.h"
 
-static int      len_hexadecimal(t_info *s, unsigned int nbr)
+static int      len_hexadecimal(t_info *s, unsigned long long int nbr)
 {
     int     nbrlen;
 
     nbrlen = 0;
-    if (nbr == 0)
+    if (nbr == 0 && s->point == 0)
         nbrlen++;
+    if (s->flag[HASH] == '1' && nbr != 0)
+        nbrlen += 2;
     while (nbr > 0)
     {
         nbrlen++;
         nbr /= 16;
     }
-    if (s->flag[HASH] == '1')
-        nbrlen += 2;
     return (nbrlen);
 }
 
@@ -34,8 +33,9 @@ static void     minus_hexadecimal(t_info *s, unsigned long long nbr, int nbrlen,
 {
     if (s->flag[HASH] == '1' && nbr != 0)
         *s->fm == 'x' ? ft_putstr("0x") : ft_putstr("0X");
-    ft_putnchar('0', z); 
-    ft_puthex(nbr, *s->fm);
+    ft_putnchar('0', z);
+    if (s->point == 0)
+        ft_puthex(nbr, *s->fm);
     if (s->mfw > nbrlen)
         while (--s->mfw > nbrlen + z)
             ft_putchar(' ');
@@ -46,13 +46,14 @@ static void     nonminus_hexadecimal(t_info *s, unsigned long long nbr, int nbrl
     if (s->mfw > nbrlen && s->flag[ZERO] != '1')
         while (--s->mfw > nbrlen + z)
             ft_putchar(' ');
-    if (s->flag[HASH] == '1')
+    if (s->flag[HASH] == '1' && nbr != 0)
         *s->fm == 'x' ? ft_putstr("0x") : ft_putstr("0X");
     if (s->mfw > nbrlen && s->flag[ZERO] == '1')
         while (--s->mfw > nbrlen + z)
             ft_putchar('0');
-    ft_putnchar('0', z); 
-    ft_puthex(nbr, *s->fm);
+    ft_putnchar('0', z);
+    if (s->point == 0)
+        ft_puthex(nbr, *s->fm);
 }
 
 t_info          *deal_hexadecimal(t_info *s)
@@ -62,15 +63,17 @@ t_info          *deal_hexadecimal(t_info *s)
     int                 z;
 
     nbr = trans_ull(s, va_arg(s->ap, unsigned long long));
-
     nbrlen = len_hexadecimal(s, nbr);
-
-    s->flag[HASH] == '1' ? (z = s->prec - nbrlen + 2) : (z = s->prec - nbrlen);
+    (s->flag[HASH] == '1' && nbr != 0) ? (z = s->prec - nbrlen + 2) : (z = s->prec - nbrlen);
     if (z < 0)
         z = 0;
-    s->mfw <= s->prec ? (s->len += z) : (s->len += s->mfw - nbrlen); 
-    if (s->mfw > nbrlen)
+    if (s->mfw <= s->prec)
+        s->len += z;
+    if (s->mfw > nbrlen && s->mfw > s->prec)
+    {
+        s->len += s->mfw - nbrlen;
         s->mfw++;
+    }
     s->flag[MINUS] == '1' ? minus_hexadecimal(s, nbr, nbrlen, z) : nonminus_hexadecimal(s, nbr, nbrlen, z);
     s->len += nbrlen;
     s->fm++;

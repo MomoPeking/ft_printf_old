@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../includes/ft_printf.h"
 
 t_info  *deal_flags(t_info *s)
 {
@@ -50,8 +50,6 @@ t_info  *deal_min_field_width(t_info *s)
 
 t_info  *deal_precision(t_info *s)
 {
-    int     i;
-
     s->prec = 0;
     s->point = 0;
     if (*s->fm == '.')

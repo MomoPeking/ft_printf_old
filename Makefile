@@ -10,24 +10,30 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ft_printf
+NAME = libftprintf.a
 
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -Werror
 
 LIB_PATH = ./libft
-LIB_LINK = -I $(LIB_PATH) -L $(LIB_PATH) -lft
+SRC_PATH = ./src/*.c
+INC_PATH = ./include/*.h
 
 $(NAME):
 	@make -C $(LIB_PATH)
-	@gcc -c *.c
-	@gcc $(FALGS) $(LIB_LINK) -lm *.o -o a.out
+	@gcc $(FLAGS) -c $(SRC_PATH) -I $(INC_PATH)
+	@ar rc $(NAME) *.o $(LIB_PATH)/*.o 
 
 all: $(NAME)
 
 clean: 
 	@make clean -C $(LIB_PATH)
-	@rm *.o
+	@rm -f *.o
 
-fclean:
-	@rm a.out
-	@rm $(LIB_PATH)/*.a
+fclean: clean
+	@rm -f $(LIB_PATH)/*.a
+	@rm -f *.a
+
+re: fclean all
+
+temp:
+	@gcc main.c libftprintf.a

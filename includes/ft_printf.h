@@ -13,7 +13,7 @@
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
 
-#include "libft/libft.h"
+#include "../libft/libft.h"
 #include <stdlib.h>
 #include <stdarg.h>
 
@@ -70,5 +70,7 @@ void            	nonminus_float(t_info *s, long double nbr, int nbrlen);
 
 unsigned long long	trans_ull(t_info *s, unsigned long long nbr);
 long long           trans_ll(t_info *s, long long nbr);
+
+int					ft_printf(const char *restrict format, ...);
 
 #endif

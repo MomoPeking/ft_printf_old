@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../includes/ft_printf.h"
 
 void	ft_putll(long long i)
 {
-	if (i == -9223372036854775808U)
+	if ((unsigned long long)i == -9223372036854775808U)
 		ft_putstr("9223372036854775808");
 	else if (i < 0)
 		ft_putll(i * -1);
