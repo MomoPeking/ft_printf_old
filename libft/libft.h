@@ -6,7 +6,7 @@
 /*   By: qdang <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/18 21:04:30 by qdang             #+#    #+#             */
-/*   Updated: 2019/12/29 20:35:54 by qdang            ###   ########.fr       */
+/*   Updated: 2020/03/10 15:21:09 by qdang            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,6 @@ int				ft_abs(int i);
 int				ft_atoi_hex(const char *str);
 int				ft_dtoi(double nb);
 void			ft_putnchar(char c, int n);
-int     		ft_nbrlen(long long nbr);
+int				ft_nbrlen(long long nbr);
 
 #endif

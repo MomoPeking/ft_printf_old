@@ -18,9 +18,12 @@ int     main()
     int     a;
     int     b;
 
-    a = ft_printf("%5u", 4294967295);
+
+    a = ft_printf("{%Lf}", 1.42l);
     printf("Return Value of ft_printf: %d\n", a);
-    b = printf("%5u", 4294967295);
+    b = printf("{%Lf}", 1.42l);
     printf("Return Value of printf: %d\n", b);
+
+
     return (0);
 }
