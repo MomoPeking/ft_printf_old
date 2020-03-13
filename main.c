@@ -19,9 +19,9 @@ int     main()
     int     b;
 
 
-    a = ft_printf("{%Lf}", 1.42l);
+    a = ft_printf("%.8Lf", 23.375094499l);
     printf("Return Value of ft_printf: %d\n", a);
-    b = printf("{%Lf}", 1.42l);
+    b = printf("%.8Lf", 23.375094499l);
     printf("Return Value of printf: %d\n", b);
 
 

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <stdio.h>
 
 void	ft_putll(long long i)
 {
@@ -69,7 +68,6 @@ void	ft_puthex(unsigned long long i, char c)
 void	ft_putf(t_info *s, long double nbr, int nbrlen)
 {
 	double	decnbr;
-	double	temp;
 	int		declen;
 
 	declen = 0;
@@ -87,9 +85,10 @@ void	ft_putf(t_info *s, long double nbr, int nbrlen)
 		ft_putchar('.');
 	while (declen > 0 && s->point != 1)
 	{
-		temp = decnbr * 10;
-		decnbr = temp - (long long)temp;
-		ft_putnbr((long long)temp);
+		decnbr = decnbr * 10 - (long long)decnbr * 10;
+		if (decnbr >= 0.99999999)
+			decnbr += 0.000000001;
+		ft_putnbr((long long)decnbr);
 		declen--;
 	}
 }

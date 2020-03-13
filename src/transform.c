@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <stdio.h>
 
 unsigned long long	trans_ull(t_info *s, unsigned long long nbr)
 {
